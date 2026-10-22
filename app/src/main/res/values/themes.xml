@@ -1,0 +1,4 @@
+<resources>
+
+    <style name="Theme.Atlas" parent="Theme.MaterialComponents.Light" />
+</resources>
