@@ -11,14 +11,14 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ExercicioDao {
 
-    @Query("SELECT * FROM exercicios ORDER BY nome")
-    fun listar(): Flow<List<Exercicio>>
+    @Query("SELECT * FROM exercicios WHERE usuarioId IS NULL OR usuarioId = :usuarioId ORDER BY nome")
+    fun listar(usuarioId: Long): Flow<List<Exercicio>>
 
     @Query("SELECT * FROM exercicios WHERE id = :id")
     suspend fun buscarPorId(id: Long): Exercicio?
 
-    @Query("SELECT COUNT(*) FROM exercicios")
-    fun contar(): Flow<Int>
+    @Query("SELECT COUNT(*) FROM exercicios WHERE usuarioId IS NULL OR usuarioId = :usuarioId")
+    fun contar(usuarioId: Long): Flow<Int>
 
     @Insert
     suspend fun inserir(exercicio: Exercicio): Long

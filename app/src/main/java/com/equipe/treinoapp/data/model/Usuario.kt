@@ -14,5 +14,6 @@ data class Usuario(
     val email: String,
     val senhaHash: String,
     val telefone: String = "",
-    val objetivo: String
+    val objetivo: String,
+    val role: String = "usuario"
 )

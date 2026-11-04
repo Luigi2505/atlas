@@ -11,9 +11,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 data class SerieUiState(
     val series: List<SerieComExercicio> = emptyList(),
@@ -21,26 +24,33 @@ data class SerieUiState(
     val volumeTotalKg: Double = 0.0
 )
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SerieViewModel @Inject constructor(
     private val serieRepository: SerieRepository,
-    private val exercicioRepository: ExercicioRepository
+    private val exercicioRepository: ExercicioRepository,
+    private val sessao: com.equipe.treinoapp.data.SessaoManager
 ) : ViewModel() {
 
-    val uiState: StateFlow<SerieUiState> = combine(
-        serieRepository.listar(),
-        exercicioRepository.listar()
-    ) { series, exercicios ->
-        SerieUiState(
-            series = series,
-            exercicios = exercicios,
-            volumeTotalKg = series.sumOf { it.serie.peso * it.serie.repeticoes }
+    val uiState: StateFlow<SerieUiState> = sessao.usuarioId
+        .flatMapLatest { id ->
+            if (id == null) flowOf(SerieUiState())
+            else combine(
+                serieRepository.listar(),
+                exercicioRepository.listar(id)
+            ) { series, exercicios ->
+                SerieUiState(
+                    series = series,
+                    exercicios = exercicios,
+                    volumeTotalKg = series.sumOf { it.serie.peso * it.serie.repeticoes }
+                )
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = SerieUiState()
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = SerieUiState()
-    )
 
     suspend fun buscarPorId(id: Long): Serie? = serieRepository.buscarPorId(id)
 

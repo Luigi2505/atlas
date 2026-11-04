@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.equipe.treinoapp.ui.admin.AdminScreen
 import com.equipe.treinoapp.ui.exercicio.ExercicioFormScreen
 import com.equipe.treinoapp.ui.exercicio.ExercicioListScreen
 import com.equipe.treinoapp.ui.home.HomeScreen
@@ -27,6 +28,7 @@ object Rotas {
     const val LOGIN = "login"
     const val CADASTRO = "cadastro"
     const val PERFIL = "perfil"
+    const val ADMIN = "admin"
 
     const val HOME = "home"
 
@@ -95,7 +97,16 @@ fun AppNavigation() {
                     navController.navigate(Rotas.BOAS_VINDAS) {
                         popUpTo(Rotas.HOME) { inclusive = true }
                     }
+                },
+                onIrAdmin = {
+                    navController.navigate(Rotas.ADMIN)
                 }
+            )
+        }
+
+        composable(Rotas.ADMIN) {
+            AdminScreen(
+                onVoltar = voltar
             )
         }
 

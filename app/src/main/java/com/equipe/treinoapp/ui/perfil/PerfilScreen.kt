@@ -40,6 +40,7 @@ import kotlinx.coroutines.launch
 fun PerfilScreen(
     onVoltar: () -> Unit,
     onSair: () -> Unit,
+    onIrAdmin: () -> Unit = {},
     viewModel: PerfilViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -171,6 +172,15 @@ fun PerfilScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Sair da conta", color = MaterialTheme.colorScheme.error)
+            }
+
+            if (uiState.usuario?.role == "admin") {
+                Button(
+                    onClick = onIrAdmin,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Página de Administração")
+                }
             }
         }
     }

@@ -27,6 +27,7 @@ object AppModule {
     @Singleton
     fun provideBanco(@ApplicationContext contexto: Context): AppDatabase {
         return Room.databaseBuilder(contexto, AppDatabase::class.java, "treino.db")
+            .fallbackToDestructiveMigration()
             .addCallback(dadosIniciais)
             .build()
     }
@@ -66,18 +67,19 @@ object AppModule {
             )
             exercicios.forEach { (nome, grupo, equipamento) ->
                 db.execSQL(
-                    "INSERT INTO exercicios (nome, grupoMuscular, equipamento) VALUES (?, ?, ?)",
-                    arrayOf<Any?>(nome, grupo, equipamento)
+                    "INSERT INTO exercicios (nome, grupoMuscular, equipamento, usuarioId) VALUES (?, ?, ?, ?)",
+                    arrayOf<Any?>(nome, grupo, equipamento, null)
                 )
             }
             db.execSQL(
-                "INSERT INTO usuarios (nome, email, senhaHash, telefone, objetivo) VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO usuarios (nome, email, senhaHash, telefone, objetivo, role) VALUES (?, ?, ?, ?, ?, ?)",
                 arrayOf<Any?>(
                     "Aluno Teste",
                     "aluno@academia.com",
                     hashSenha("123456"),
                     "(41) 99999-0000",
-                    "Ganho de massa"
+                    "Ganho de massa",
+                    "usuario"
                 )
             )
             db.execSQL(

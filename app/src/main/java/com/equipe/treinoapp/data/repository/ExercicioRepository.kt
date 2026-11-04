@@ -8,9 +8,9 @@ import javax.inject.Inject
 class ExercicioRepository @Inject constructor(
     private val dao: ExercicioDao
 ) {
-    fun listar(): Flow<List<Exercicio>> = dao.listar()
+    fun listar(usuarioId: Long): Flow<List<Exercicio>> = dao.listar(usuarioId)
 
-    fun contar(): Flow<Int> = dao.contar()
+    fun contar(usuarioId: Long): Flow<Int> = dao.contar(usuarioId)
 
     suspend fun buscarPorId(id: Long): Exercicio? = dao.buscarPorId(id)
 

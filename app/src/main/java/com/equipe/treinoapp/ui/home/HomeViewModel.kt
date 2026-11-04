@@ -41,20 +41,23 @@ class HomeViewModel @Inject constructor(
     sessao: SessaoManager
 ) : ViewModel() {
 
-    private val contagens = combine(
-        exercicioRepository.contar(),
-        rotinaRepository.contar(),
-        treinoRepository.contar(),
-        serieRepository.contar(),
-        metaRepository.contarPendentes()
-    ) { exercicios, rotinas, treinos, series, metas ->
-        HomeUiState(
-            exercicios = exercicios,
-            rotinas = rotinas,
-            treinos = treinos,
-            series = series,
-            metasPendentes = metas
-        )
+    private val contagens = sessao.usuarioId.flatMapLatest { id ->
+        if (id == null) flowOf(HomeUiState())
+        else combine(
+            exercicioRepository.contar(id),
+            rotinaRepository.contar(),
+            treinoRepository.contar(),
+            serieRepository.contar(),
+            metaRepository.contarPendentes()
+        ) { exercicios, rotinas, treinos, series, metas ->
+            HomeUiState(
+                exercicios = exercicios,
+                rotinas = rotinas,
+                treinos = treinos,
+                series = series,
+                metasPendentes = metas
+            )
+        }
     }
 
     private val nomeUsuario = sessao.usuarioId.flatMapLatest { id ->

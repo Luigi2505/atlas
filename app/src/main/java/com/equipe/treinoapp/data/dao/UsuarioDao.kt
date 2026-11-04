@@ -19,6 +19,9 @@ interface UsuarioDao {
     @Query("SELECT * FROM usuarios WHERE email = :email LIMIT 1")
     suspend fun buscarPorEmail(email: String): Usuario?
 
+    @Query("SELECT * FROM usuarios ORDER BY nome")
+    fun listarTodos(): Flow<List<Usuario>>
+
     @Insert
     suspend fun inserir(usuario: Usuario): Long
 

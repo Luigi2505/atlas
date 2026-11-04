@@ -8,5 +8,6 @@ data class Exercicio(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val nome: String,
     val grupoMuscular: String,
-    val equipamento: String
+    val equipamento: String,
+    val usuarioId: Long? = null
 )

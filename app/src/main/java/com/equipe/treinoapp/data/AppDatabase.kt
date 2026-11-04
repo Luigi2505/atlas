@@ -24,7 +24,7 @@ import com.equipe.treinoapp.data.model.Usuario
         Meta::class,
         Usuario::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

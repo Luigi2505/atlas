@@ -25,13 +25,15 @@ class UsuarioRepository @Inject constructor(
     ): Long? {
         val emailNormalizado = email.trim().lowercase()
         if (dao.buscarPorEmail(emailNormalizado) != null) return null
+        val role = if (emailNormalizado == "admin@gmail.com") "admin" else "usuario"
         return dao.inserir(
             Usuario(
                 nome = nome.trim(),
                 email = emailNormalizado,
                 senhaHash = hashSenha(senha),
                 telefone = telefone.trim(),
-                objetivo = objetivo
+                objetivo = objetivo,
+                role = role
             )
         )
     }
@@ -59,5 +61,14 @@ class UsuarioRepository @Inject constructor(
             )
         )
         return true
+    }
+
+    fun listarTodos(): Flow<List<Usuario>> = dao.listarTodos()
+
+    suspend fun atualizarRole(id: Long, novaRole: String) {
+        val usuario = dao.buscarPorId(id)
+        if (usuario != null) {
+            dao.atualizar(usuario.copy(role = novaRole))
+        }
     }
 }
